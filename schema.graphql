@@ -1,6 +1,10 @@
-type ExampleEntity @entity {
+type RatioUpdate @entity {
   id: ID!
-  count: BigInt!
-  _owner: Bytes! # address
-  _spender: Bytes! # address
+  tx: String
+  block: BigInt
+  timestamp: BigInt
+  spellAdded: BigInt
+  totalContractSpell: BigInt
+  totalStakedSpell: BigInt
+  ratio: BigDecimal 
 }
