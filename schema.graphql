@@ -1,5 +1,6 @@
 type RatioUpdate @entity {
-  id: ID!
+  id: String!
+  tx: String
   block: BigInt
   timestamp: BigInt
   spellAdded: BigInt

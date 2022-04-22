@@ -13,25 +13,33 @@ export function handleTransfer(event: Transfer): void {
   const isDistribution = toAddressString == stakedSpellAddressString
   if (!isDistribution) return
 
-  // create new entity
-  const id = event.transaction.hash.toHex()
-  const ratioUpdate = new RatioUpdate(id)
-
   // contracts
   const spellContract = SpellToken.bind(event.address)
   const stakedSpellContract = StakedSpellToken.bind(STAKED_SPELL_ADDRESS)
 
-  // calculations
-  const totalContractSpell = spellContract.try_balanceOf(STAKED_SPELL_ADDRESS)
-  const totalStakedSpell = stakedSpellContract.try_totalSupply()
-  const ratio = totalContractSpell.toBigDecimal() / totalStakedSpell.toBigDecimal()
+  // contract calls
+  const totalContractSpellCall = spellContract.try_balanceOf(STAKED_SPELL_ADDRESS)
+  const totalStakedSpellCall = stakedSpellContract.try_totalSupply()
+  if (totalContractSpellCall.reverted || totalStakedSpellCall.reverted) return
 
-  // add entity properties
+  // calculations
+  const totalContractSpellDec = totalContractSpellCall.value.toBigDecimal()
+  const totalStakedSpellDec = totalStakedSpellCall.value.toBigDecimal()
+  const ratio = totalContractSpellDec / totalStakedSpellDec
+  const id = 'id_' + ratio.toString()
+
+  // verify this ratio does not already exist
+  let ratioUpdate = RatioUpdate.load(id)
+  if (ratioUpdate) return
+
+  // create new entity
+  ratioUpdate = new RatioUpdate(id)
+  ratioUpdate.tx = event.transaction.hash.toHex()
   ratioUpdate.block = event.block.number
   ratioUpdate.timestamp = event.block.timestamp
   ratioUpdate.spellAdded = event.params._value
-  ratioUpdate.totalContractSpell = totalContractSpell
-  ratioUpdate.totalStakedSpell = totalStakedSpell
+  ratioUpdate.totalContractSpell = totalContractSpellCall.value
+  ratioUpdate.totalStakedSpell = totalStakedSpellCall.value
   ratioUpdate.ratio = ratio
 
   // store entity
