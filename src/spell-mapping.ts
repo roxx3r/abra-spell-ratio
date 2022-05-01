@@ -6,11 +6,15 @@ import { RatioUpdate } from '../generated/schema'
 export function handleTransfer(event: Transfer): void {
   // constants
   const STAKED_SPELL_ADDRESS = Address.fromString('0x26fa3fffb6efe8c1e69103acb4044c26b9a106a9')
+  const TRANSFER_METHOD_HEX = 'a9059cbb'
 
   // verify this is a distrubition to sspell contract
   const toAddressString = event.params._to.toHexString()
   const stakedSpellAddressString = STAKED_SPELL_ADDRESS.toHexString()
-  const isDistribution = toAddressString == stakedSpellAddressString
+  const isToStakedSpellAddress = toAddressString == stakedSpellAddressString
+  const isTransfer = event.transaction.input.toHexString().includes(TRANSFER_METHOD_HEX)
+  const isDistribution = isToStakedSpellAddress && isTransfer
+
   if (!isDistribution) return
 
   // contracts

@@ -4,7 +4,8 @@
   "scripts": {
     "codegen": "graph codegen",
     "build": "graph build",
-    "deploy": "graph deploy --node https://api.studio.thegraph.com/deploy/ abra-spell-ratio",
+    "deploy:studio": "graph deploy --node https://api.studio.thegraph.com/deploy/ abra-spell-ratio",
+    "deploy:service": "graph deploy --node https://api.thegraph.com/deploy/ roxx3r/abracadabra-staked-spell-ratio",
     "create-local": "graph create --node http://localhost:8020/ abra-spell-ratio",
     "remove-local": "graph remove --node http://localhost:8020/ abra-spell-ratio",
     "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 abra-spell-ratio"
